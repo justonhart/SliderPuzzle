@@ -49,9 +49,33 @@ addEventListener("keydown", (event) => {
 	}
 });
 
+addEventListener("click", (event) => {
+	switch(event.target.id){
+		case 'decreaseHeight':
+			rowCount -= 1;
+			drawBoard();
+			break;
+		case 'increaseHeight':
+			rowCount += 1;
+			drawBoard();
+			break;
+		case 'decreaseWidth':
+			columnCount -= 1;
+			drawBoard();
+			break;
+		case 'increaseWidth':
+			columnCount += 1;
+			drawBoard();
+			break;
+	}
+});
+
+
 function drawBoard(){
-	document.getElementById('container').style.gridTemplateColumns = `repeat(${columnCount}, 1fr)`;
-	document.getElementById('container').style.gridTemplateRows = `repeat(${rowCount}, 1fr)`;
+	const container = document.getElementById('container');
+	container.style.gridTemplateColumns = `repeat(${columnCount}, 1fr)`;
+	container.style.gridTemplateRows = `repeat(${rowCount}, 1fr)`;
+	container.innerHTML = '';
 
 	for(let i = 1; i < rowCount * columnCount; i++){
 		let div = document.createElement('div');
