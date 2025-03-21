@@ -1,51 +1,25 @@
-let columnCount = 4;
+const DIRECTIONS = ["up","down","left","right"];
+let columnCount = 3;
 let rowCount = 3;
 
 drawBoard();
 
 addEventListener("keydown", (event) => {
-	const container = document.getElementById('container');
-	const spaces = Array.from(container.children);
-	const emptyIndex = spaces .findIndex(c => c.classList.contains('empty'));
-	const emptySpaceColumn = emptyIndex % columnCount;
-	const emptySpaceRow = Math.floor(emptyIndex / columnCount);
-
-	let indexToMove;
-
 	//down
 	if(event.key === 'ArrowDown' || event.key == 's' || event.key == 'j'){
-		//get value from same column, row - 1; subtract column count from index
-		if(emptySpaceRow > 0){
-			indexToMove = emptyIndex - columnCount;
-		}
+		move("down");
 	}
 	//up
 	if(event.key === 'ArrowUp' || event.key == 'w' || event.key == 'k'){
-		//get value from same column, row + 1; add column count from index
-		if(rowCount > emptySpaceRow + 1){
-			indexToMove = emptyIndex + columnCount;
-		}
+		move("up");
 	}
 	//left
 	if(event.key === 'ArrowLeft' || event.key == 'a' || event.key == 'h'){
-		//get value from same row, column + 1; index + 1
-		if(columnCount > emptySpaceColumn + 1){
-			indexToMove = emptyIndex + 1;
-		}
+		move("left");
 	}
 	//right
 	if(event.key === 'ArrowRight' || event.key == 'd' || event.key == 'l'){
-		//get value from same row, column - 1; index - 1
-		if(emptySpaceColumn > 0){
-			indexToMove = emptyIndex - 1;
-		}
-	}
-
-	if(indexToMove != undefined){
-		spaces[emptyIndex].textContent = spaces[indexToMove].textContent;
-		spaces[emptyIndex].classList.remove('empty');
-		spaces[indexToMove].textContent = '';
-		spaces[indexToMove].classList.add('empty');
+		move("right");
 	}
 });
 
@@ -67,9 +41,56 @@ addEventListener("click", (event) => {
 			columnCount += 1;
 			drawBoard();
 			break;
+		case 'shuffle':
+			shuffle(1000);
+			break;
 	}
 });
 
+function move(direction) {
+	const container = document.getElementById('container');
+	const spaces = Array.from(container.children);
+	const emptyIndex = spaces .findIndex(c => c.classList.contains('empty'));
+	const emptySpaceColumn = emptyIndex % columnCount;
+	const emptySpaceRow = Math.floor(emptyIndex / columnCount);
+	let indexToMove;
+
+	switch(direction){
+		case "up":
+			//get value from same column, row + 1; add column count from index
+			if(rowCount > emptySpaceRow + 1){
+				indexToMove = emptyIndex + columnCount;
+			}
+			break;
+		case "down":
+			//get value from same column, row - 1; subtract column count from index
+			if(emptySpaceRow > 0){
+				indexToMove = emptyIndex - columnCount;
+			}
+			break;
+		case "left":
+			//get value from same row, column + 1; index + 1
+			if(columnCount > emptySpaceColumn + 1){
+				indexToMove = emptyIndex + 1;
+			}
+			break;
+		case "right":
+			//get value from same row, column - 1; index - 1
+			if(emptySpaceColumn > 0){
+				indexToMove = emptyIndex - 1;
+			}
+			break;
+	}
+
+	if(indexToMove != undefined){
+		spaces[emptyIndex].textContent = spaces[indexToMove].textContent;
+		spaces[emptyIndex].classList.remove('empty');
+		spaces[indexToMove].textContent = '';
+		spaces[indexToMove].classList.add('empty');
+		return true;
+	}
+	return false;
+}
 
 function drawBoard(){
 	const container = document.getElementById('container');
@@ -88,4 +109,15 @@ function drawBoard(){
 	empty.classList.add('space');
 	empty.classList.add('empty');
 	document.getElementById('container').appendChild(empty);
+}
+
+function shuffle(totalMoves){
+	let successfulMoves = 0;
+	while(successfulMoves < totalMoves){
+		const direction = DIRECTIONS[Math.floor(Math.random() * 4)];
+		let success = move(direction);
+		if(success){
+			successfulMoves++;
+		}
+	}
 }
